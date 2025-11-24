@@ -32,3 +32,30 @@ select
     (select count(*) from project_members pm where pm.user_id = users.id) as member_projects
     from users
     where users.created_at < current_date - interval '1 year';
+
+delete from users u where u.id = 10;
+delete from tasks t where t.owner_id = (
+    select id from users u where u.id = 10
+                              );
+delete from tasks;
+delete from projects p where p.end_date = now();
+delete from tasks t where t.estimated_hours < 10;
+
+update tasks
+    set title = 'task'
+    where id < 5;
+update projects
+    set start_date = now()
+    where owner_id = ( select id from users u where u.login = 'login');
+update tasks
+    set priority = 5
+    where status_id = ( select id from statuses s where s.color = 'green');
+update tasks
+    set status_id = ( select id from statuses s where s.color = 'green')
+    where deadline = now();
+update comments
+    set content = ''
+    where user_id = 5 and task_id < 10;
+
+
+

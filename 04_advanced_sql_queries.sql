@@ -41,3 +41,47 @@ update tasks t
 delete from comments where user_id = (
     select id from users where login = 'login'
     );
+
+select
+    u.id,
+    u.name,
+    count(t.id) as user_tasks
+from users u
+         join tasks t on t.owner_id = u.id
+group by u.id, u.name
+having count(t.id) > (
+    select avg(task_count)
+    from (
+             select count(*) as task_count
+             from tasks
+             group by owner_id
+         ) as sub
+);
+
+select
+    t.id,
+    t.title,
+    t.deadline,
+    t.project_id
+from tasks t
+where t.deadline < (
+    select avg(t2.deadline)
+    from tasks t2
+    where t2.project_id = t.project_id
+);
+
+select
+    p.id,
+    p.name,
+    count(pm.user_id) as members_count
+from projects p
+         join project_members pm on pm.project_id = p.id
+group by p.id, p.name
+having count(pm.user_id) > (
+    select avg(member_count)
+    from (
+             select count(*) as member_count
+             from project_members
+             group by project_id
+         ) as sub
+);
